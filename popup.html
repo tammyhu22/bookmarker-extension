@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="popup.css" />
+    <script src="popup.js" type="module"></script>
+    <meta charset="UTF-8">
+  </head>
+<body>
+  <form id="control-row">
+    <div class="popup-container">
+        <div class="popup-title">&#127850; COOKIE COUNTER</div>
+        <div class="popup-content">I'm here to display your cookies!</div>
+        <br />
+    </div>
+    <div class = "text-container">  
+        <p>Number of cookies on this page: <span id="cookienum"></span></p>      
+        <label class = "input" for="input">Domain:</label>
+        <input type="text" id="input" class = "input">
+        <br>
+        <br />
+        <button class = "button1" id="go">Clear Cookies</button>
+        <br />
+        <br />
+    </div>
+  </form>
+  <span id="message" hidden></span>
+  <br />
+  <br />
+</body>
+</html>
