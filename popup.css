@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono|Lexend|DM+Sans');
+body {
+    width: max-content;
+    margin: 0;
+    font-size: 1rem;
+    background-color: rgb(213, 199, 172);
+  }
+  
+  .popup-title {
+    font-weight: 900;
+    background-color: rgb(70, 64, 61);
+    color: rgb(247, 247, 247);
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+    padding-top: 10px;
+    font-family: "Lexend", sans-serif;
+    font-size: larger;
+  }
+  
+  .popup-content {
+    font-family: "Lexend", monospace;
+    padding: 10px;
+    color: rgb(61, 59, 53);
+  }
+
+  .button1 {
+    background-color:rgb(70, 64, 61);
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 50px; 
+    font-family: "Lexend", monospace;
+    
+  }
+
+  .text-container {
+    margin: 10px;
+    font-size: larger;
+    font-family: "Lexend", sans-serif;
+    color: rgb(61, 59, 53);
+  }
+
+  .input {
+    background-color: rgb(213, 199, 172);
+    border: none;
+  }
