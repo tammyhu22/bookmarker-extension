@@ -4,29 +4,84 @@ const input = document.getElementById("input");
 const message = document.getElementById("message");
 // tried putting in my own constant name...confused how to link js to html
 const cookienum = document.getElementById("cookienum");
-// cookienum.innerText = 2;
+const checkbox = document.getElementById("enable");
 
+// showing cookies
+checkbox.addEventListener("change", (e) => updateContentScript(false));
+async function updateContentScript(addCookie) {
+    // Sends a message to the content script with an object that has the
+    // current value of the checkbox and a boolean (whether to add a block)
+    const message2 = { enable: checkbox.checked, addCookie: addCookie };
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    const response = await chrome.tabs.sendMessage(tab.id, message2);
+    // You can do something with response from the content script here
+    console.log(response);
+  }
+
+
+let urlForTab = "";
 // The async IIFE is necessary because Chrome <89 does not support top level await.
-(async function initPopupWindow() {
+async function initPopupWindow() {
   let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
   if (tab?.url) {
     try {
       let url = new URL(tab.url);
       input.value = url.hostname;
+      urlForTab = url.hostname;
+      console.log(urlForTab);
     } catch {}
   }
 
   input.focus();
-})();
+};
+
+
+// MY STUFF
+// create event listener
+// inside call getURL function when dom content is loaded
+// function getURL() {
+//     let cookie = getCookies(stringToUrl(urlForTab));
+//     console.log(stringToUrl(urlForTab));
+// }
+
+async function setUp (event) {
+    await initPopupWindow();
+    console.log('DOM fully loaded and parsed');
+    console.log(urlForTab);
+    let cookie = getCookies(urlForTab);
+    // console.log(stringToUrl(urlForTab));    
+    console.log(cookie);
+}
+
+window.addEventListener('DOMContentLoaded', setUp);
+
+// trying to get current number of cookies, and to update once deleted
+async function getCookies(domain) {
+    let cookiesDeleted = 0;
+    console.log(domain);
+    let cookies = await chrome.cookies.getAll({ domain });
+    console.log(cookies);
+    if (cookies.length > 0) {
+        setCookie(cookies.length);
+    } else if (cookies.length === 0) {
+        setCookie("No cookies found");
+    }
+}
+
+
+
+// trying to print it into extension html
+function setCookie(cookie) {
+    cookienum.textContent = String(cookie);
+    cookienum.hidden = false;
+  }
 
 
 form.addEventListener("submit", handleFormSubmit);
-// create event listener
-// inside call getURL function when dom content is loaded
-function getURL() {
-
-}
 
 
 async function handleFormSubmit(event) {
@@ -58,29 +113,7 @@ function stringToUrl(input) {
 }
 
 
-// MY STUFF
-let cookie = getCookies(stringToUrl(input.value));
 
-console.log(stringToUrl(input.value));
-// trying to get current number of cookies, and to update once deleted
-function getCookies(domain) {
-    let cookiesDeleted = 0;
-    let cookies = chrome.cookies.getAll({ domain });
-    if (cookies.length > 0) {
-        return cookies.length;
-    } else if (cookies.length === 0) {
-        return "No cookies found";
-    }
-    console.log(cookies.length);
-}
-
-console.log(cookie);
-
-// trying to print it into extension html
-function setCookie(cookie) {
-    cookienum.textContent = toStr(cookie);
-    cookienum.hidden = false;
-  }
 
 // async function displayCookies(domain) {
 //     let cookies = 0;
@@ -96,7 +129,7 @@ function setCookie(cookie) {
 //       }
 // }
 
-console.log(displayCookies(stringToUrl(tab.url).hostname));
+// console.log(displayCookies(stringToUrl(tab.url).hostname));
 
 async function deleteDomainCookies(domain) {
   let cookiesDeleted = 0;
@@ -104,6 +137,7 @@ async function deleteDomainCookies(domain) {
     const cookies = await chrome.cookies.getAll({ domain });
 
     if (cookies.length === 0) {
+      setCookie(0);
       return "No cookies found";
     }
 
@@ -114,7 +148,7 @@ async function deleteDomainCookies(domain) {
   } catch (error) {
     return `Unexpected error: ${error.message}`;
   }
-
+  setCookie(0);
   return `Deleted ${cookiesDeleted} cookie(s).`;
 }
 

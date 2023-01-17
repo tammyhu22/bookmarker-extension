@@ -7,5 +7,18 @@
     "action": {
       "default_popup": "popup.html",
       "default_icon": "icon.png"
-    }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "content-scripts/cookie.js"
+            ],
+            "css": [
+                "content-scripts/cookie.css"
+            ]
+        }
+    ]
   }
