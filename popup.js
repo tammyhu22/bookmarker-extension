@@ -85,7 +85,7 @@ const sendMessageId = document.getElementById("enable");
 
 // able to send message to content script with number of cookies
 const sendMessage = (e) => {
-    sendMessageToContentScript({number:cookienum2, showcookies:sendMessageId.checked})
+    sendMessageToContentScript({number:cookienum2, showcookies:sendMessageId.checked});
 }
 
 // send message to content script when there's a change
@@ -144,6 +144,7 @@ async function deleteDomainCookies(domain) {
     return `Unexpected error: ${error.message}`;
   }
   setCookie(0);
+  sendMessageToContentScript({number:0, showcookies:false});
   return `Deleted ${cookiesDeleted} cookie(s).`;
 }
 
