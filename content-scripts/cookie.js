@@ -12,18 +12,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(status);
 
     // original images
-    let oldImages = document.querySelectorAll("img");
+    let oldImages = [];
 
     // for manipulating
-    const images = document.querySelectorAll("img");
+    let images = document.querySelectorAll("img");
+    
     console.log(images);
     if (status) {
         for (let i = 0; i < newCookie; i++) {
+            console.log(images[i]);
+            oldImages.push(images[i].src);
+
             images[i].src = "https://media.giphy.com/media/Sqgc7YiKVXcLG12cnZ/giphy.gif";
         }
-    } else if (status = false) {
+    } else if (status === false) {
         for (let i = 0; i < newCookie; i++) {
-            images[i].src = oldImages[i].src;
+            images[i].src = oldImages[i];
         }
     }
 
