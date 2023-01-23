@@ -20,5 +20,11 @@
                 "content-scripts/cookie.css"
             ]
         }
-    ]
+    ],
+    "web_accessible_resources": [
+        {
+          "resources": ["https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/325/cookie_1f36a.png"],
+          "matches": ["<all_urls>"]
+        }
+      ]
   }

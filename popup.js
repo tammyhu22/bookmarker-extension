@@ -4,22 +4,7 @@ const input = document.getElementById("input");
 const message = document.getElementById("message");
 // tried putting in my own constant name...confused how to link js to html
 const cookienum = document.getElementById("cookienum");
-const checkbox = document.getElementById("enable");
 
-// showing cookies
-checkbox.addEventListener("change", (e) => updateContentScript(false));
-async function updateContentScript(addCookie) {
-    // Sends a message to the content script with an object that has the
-    // current value of the checkbox and a boolean (whether to add a block)
-    const message2 = { enable: checkbox.checked, addCookie: addCookie };
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      lastFocusedWindow: true,
-    });
-    const response = await chrome.tabs.sendMessage(tab.id, message2);
-    // You can do something with response from the content script here
-    console.log(response);
-  }
 
 
 let urlForTab = "";
@@ -57,8 +42,8 @@ async function setUp (event) {
     console.log(cookie);
 }
 
+let cookienum2 = "";
 window.addEventListener('DOMContentLoaded', setUp);
-
 // trying to get current number of cookies, and to update once deleted
 async function getCookies(domain) {
     let cookiesDeleted = 0;
@@ -66,12 +51,15 @@ async function getCookies(domain) {
     let cookies = await chrome.cookies.getAll({ domain });
     console.log(cookies);
     if (cookies.length > 0) {
+        cookienum2 = cookies.length;
+        console.log(cookienum2);
         setCookie(cookies.length);
     } else if (cookies.length === 0) {
+        cookienum2 = 0;
+        console.log(cookienum2);
         setCookie("No cookies found");
     }
 }
-
 
 
 // trying to print it into extension html
@@ -79,6 +67,30 @@ function setCookie(cookie) {
     cookienum.textContent = String(cookie);
     cookienum.hidden = false;
   }
+
+// showing cookies
+async function sendMessageToContentScript(message) {
+    // This code came from the Chrome extension documentation. It just gets
+    // the currently active tab on the last focused window to ensure that we
+    // send the message to the right place.
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    chrome.tabs.sendMessage(tab.id, message)
+}
+
+// grab checkbox
+const sendMessageId = document.getElementById("enable");
+
+// able to send message to content script with number of cookies
+const sendMessage = (e) => {
+    sendMessageToContentScript({number:cookienum2, showcookies:sendMessageId.checked})
+}
+
+// send message to content script when there's a change
+sendMessageId.addEventListener("change", sendMessage);
+
 
 
 form.addEventListener("submit", handleFormSubmit);
@@ -113,24 +125,6 @@ function stringToUrl(input) {
 }
 
 
-
-
-// async function displayCookies(domain) {
-//     let cookies = 0;
-//     try {
-//         const cookies = await chrome.cookies.getAll({ domain });
-    
-//         if (cookies.length === 0) {
-//           return "No cookies found";
-//         }
-//         return cookies.length;
-//     } catch (error) {
-//         return `Unexpected error: ${error.message}`;
-//       }
-// }
-
-// console.log(displayCookies(stringToUrl(tab.url).hostname));
-
 async function deleteDomainCookies(domain) {
   let cookiesDeleted = 0;
   try {
@@ -138,6 +132,7 @@ async function deleteDomainCookies(domain) {
 
     if (cookies.length === 0) {
       setCookie(0);
+      cookienum2 = 0;
       return "No cookies found";
     }
 
